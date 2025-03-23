@@ -1,3 +1,11 @@
 spring:
   application:
     name: hubspot-integration
+
+hubspot:
+  client-id: ${CLIENT_ID}
+  client-secret: ${CLIENT_SECRET}
+  redirect-uri: http://localhost:8080/oauth/callback
+  auth-url: https://app.hubspot.com/oauth/authorize
+  token-url: https://api.hubapi.com/oauth/v1/token
+  scopes: crm.objects.contacts.read crm.objects.contacts.write
