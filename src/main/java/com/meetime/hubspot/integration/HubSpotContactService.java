@@ -23,9 +23,9 @@ public class HubSpotContactService {
                 .uri(HubSpotURI.CONTACTS.getPath())
                 .retrieve()
                 .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(),
-                        clientResponse -> clientResponse.bodyToMono(String.class)
+                        response -> response.bodyToMono(String.class)
                                 .flatMap(errorBody -> Mono.error(
-                                        new WebApplicationException(clientResponse.statusCode(), ErrorMessage.read(errorBody, "message")))))
+                                        new WebApplicationException(response.statusCode(), ErrorMessage.read(errorBody, "message")))))
                 .bodyToMono(JsonNode.class);
     }
 
@@ -36,9 +36,9 @@ public class HubSpotContactService {
                 .bodyValue(contact.toData())
                 .retrieve()
                 .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(),
-                        clientResponse -> clientResponse.bodyToMono(String.class)
+                        response -> response.bodyToMono(String.class)
                                 .flatMap(errorBody -> Mono.error(
-                                        new WebApplicationException(clientResponse.statusCode(), ErrorMessage.read(errorBody, "message")))))
+                                        new WebApplicationException(response.statusCode(), ErrorMessage.read(errorBody, "message")))))
                 .bodyToMono(JsonNode.class);
     }
 }

@@ -19,7 +19,7 @@ public class WebClientFilter implements ExchangeFilterFunction {
             return next.exchange(request);
         }
 
-        String token = TokenUtils.extractTokenFromRequest();
+        String token = TokenUtils.extractTokenHubSpotFromRequest();
         ClientRequest filteredRequest = ClientRequest.from(request)
                 .headers(header -> header.setBearerAuth(token))
                 .build();
