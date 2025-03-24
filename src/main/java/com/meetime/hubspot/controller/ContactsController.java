@@ -1,6 +1,6 @@
 package com.meetime.hubspot.controller;
 
-import com.meetime.hubspot.dto.Contatc;
+import com.meetime.hubspot.dto.Contact;
 import com.meetime.hubspot.service.ContactService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +22,8 @@ public class ContactsController {
     }
 
     @PostMapping
-    public Mono create(@Valid @RequestBody Contatc contatc) {
-        return Mono.just(hubSpotService.create(contatc));
+    public Mono create(@Valid @RequestBody Contact contact) {
+        return Mono.just(hubSpotService.create(contact));
     }
 
 }

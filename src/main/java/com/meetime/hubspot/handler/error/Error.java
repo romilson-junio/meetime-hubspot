@@ -11,21 +11,17 @@ import org.springframework.http.HttpStatusCode;
 
 import java.time.LocalDateTime;
 
-public class StandardError {
+@Getter
+public class Error {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Getter
     private LocalDateTime date;
-    @Getter
     private Integer status;
-    @Getter
     private String error;
-    @Getter
     private String message;
-    @Getter
     private String path;
 
-    public StandardError(HttpStatusCode statusCode, Object message, HttpServletRequest request) {
+    public Error(HttpStatusCode statusCode, Object message, HttpServletRequest request) {
         this.date = LocalDateTime.now();
         this.status = statusCode.value();
         this.error = ((HttpStatus) statusCode).name();

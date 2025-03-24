@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 
 import java.util.Map;
 
-public record Contatc(
+public record Contact(
     @NotBlank(message = "Firstname é um campo obrigatório")
     String firstname,
     String lastname,

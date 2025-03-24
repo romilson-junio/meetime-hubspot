@@ -21,7 +21,8 @@ public class WebhooksController {
     @PostMapping("/contacts")
     public ResponseEntity handleWebhookContacts(@RequestBody List<Map<String, Object>> payload) {
         payload.stream().forEach(event -> {
-            log.info("Webhook { Event Id: '{}', Type: '{}', recebido para o Object Id: '{}' }", event.get("eventId"), event.get("subscriptionType"), event.get("objectId"));
+            log.info("Webhook { Event Id: '{}', Type: '{}', recebido para o Object Id: '{}' }",
+                    event.get("eventId"), event.get("subscriptionType"), event.get("objectId"));
         });
         return ResponseEntity.status(HttpStatus.OK).body(payload);
     }
