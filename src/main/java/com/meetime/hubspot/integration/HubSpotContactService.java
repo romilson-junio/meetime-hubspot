@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
+import java.util.Map;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -18,7 +20,7 @@ public class HubSpotContactService {
 
     private final HubSpotClient hubSpotClient;
 
-    public Mono<JsonNode> listAll() {
+    public Map listAll() {
         return hubSpotClient.webClient().get()
                 .uri(HubSpotURI.CONTACTS.getPath())
                 .retrieve()
@@ -26,11 +28,12 @@ public class HubSpotContactService {
                         response -> response.bodyToMono(String.class)
                                 .flatMap(errorBody -> Mono.error(
                                         new WebApplicationException(response.statusCode(), ErrorMessage.read(errorBody, "message")))))
-                .bodyToMono(JsonNode.class);
+                .bodyToMono(Map.class)
+                .block();
     }
 
 
-    public Mono<JsonNode> save(Contact contact) {
+    public String save(Contact contact) {
         return hubSpotClient.webClient().post()
                 .uri(HubSpotURI.CONTACTS.getPath())
                 .bodyValue(contact.toData())
@@ -39,6 +42,21 @@ public class HubSpotContactService {
                         response -> response.bodyToMono(String.class)
                                 .flatMap(errorBody -> Mono.error(
                                         new WebApplicationException(response.statusCode(), ErrorMessage.read(errorBody, "message")))))
-                .bodyToMono(JsonNode.class);
+                .bodyToMono(JsonNode.class)
+                .map(json -> json.get("id").asText())
+                .block();
+    }
+
+    public Map findById(String id) {
+        return hubSpotClient.webClient().get()
+                .uri(HubSpotURI.CONTACTS.getPath() + "/" + id)
+                .retrieve()
+                .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(),
+                        response -> response.bodyToMono(String.class)
+                                .flatMap(errorBody -> Mono.error(
+                                        new WebApplicationException(
+                                                response.statusCode(), ErrorMessage.read(errorBody, "message", "Nenhum registro encontrado")))))
+                .bodyToMono(Map.class)
+                .block();
     }
 }

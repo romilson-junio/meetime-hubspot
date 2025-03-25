@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
-import reactor.core.publisher.Mono;
 
 import java.util.Map;
 
@@ -18,7 +17,7 @@ public class HubSpotAuthService {
     private final HubSpotClient hubSpotClient;
     private final HubSpotAdmin hubSpotAdmin;
 
-    public Mono exchangeAuthorizationCode(String code) {
+    public Map exchangeAuthorizationCode(String code) {
         return hubSpotClient.webClient().post()
                 .uri(hubSpotAdmin.getTokenUrl())
                 .header("Content-Type", "application/x-www-form-urlencoded")
@@ -28,6 +27,7 @@ public class HubSpotAuthService {
                         .with("redirect_uri", hubSpotAdmin.getRedirectUri())
                         .with("code", code))
                 .retrieve()
-                .bodyToMono(Map.class);
+                .bodyToMono(Map.class)
+                .block();
     }
 }

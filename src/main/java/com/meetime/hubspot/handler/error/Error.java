@@ -3,7 +3,7 @@ package com.meetime.hubspot.handler.error;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import com.meetime.hubspot.utils.ResponseUtils;
+import com.meetime.hubspot.utils.URLUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
@@ -26,6 +26,6 @@ public class Error {
         this.status = statusCode.value();
         this.error = ((HttpStatus) statusCode).name();
         this.message = (String) message;
-        this.path = ResponseUtils.getFullURL(request);
+        this.path = URLUtils.getFullURL(request);
     }
 }

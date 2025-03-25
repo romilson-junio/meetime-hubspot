@@ -10,13 +10,17 @@ public class ErrorMessage {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public String read(String message, String property) {
+        return read(message, property, message);
+    }
+
+    public String read(String message, String property, String defaultMessage) {
         try {
             return objectMapper
                     .readTree(message)
                     .get(property)
                     .asText();
         } catch (JsonProcessingException e) {
-            return message;
+            return defaultMessage;
         }
     }
 

@@ -9,7 +9,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 @UtilityClass
 public class TokenUtils {
     public String extractTokenHubSpotFromRequest(HttpServletRequest request) {
-        String header = request.getHeader("X-Authorization-HubSpot");
+        final String header = request.getHeader("X-Authorization-HubSpot");
         if (header != null && header.startsWith("Bearer ")) {
             return header.substring(7);
         }

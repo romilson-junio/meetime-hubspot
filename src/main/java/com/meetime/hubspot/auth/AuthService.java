@@ -2,11 +2,11 @@ package com.meetime.hubspot.auth;
 
 import com.meetime.hubspot.config.HubSpotAdmin;
 import com.meetime.hubspot.integration.HubSpotAuthService;
+import com.meetime.hubspot.utils.URLUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.util.UriComponentsBuilder;
-import reactor.core.publisher.Mono;
 
+import java.net.URI;
 import java.util.Map;
 
 @Service
@@ -16,15 +16,15 @@ public class AuthService {
     private final HubSpotAdmin hubSpotAdmin;
     private final HubSpotAuthService hubSpotAuthService;
 
-    public String getAuthorizationUrl() {
-        return UriComponentsBuilder.fromHttpUrl(hubSpotAdmin.getAuthUrl())
-                .queryParam("client_id", hubSpotAdmin.getClientId())
-                .queryParam("redirect_uri", hubSpotAdmin.getRedirectUri())
-                .queryParam("scope", hubSpotAdmin.getScopes())
-                .toUriString();
+    public URI getAuthorizationURI() {
+        return URLUtils.created(hubSpotAdmin.getAuthUrl(), Map.of(
+                "client_id", hubSpotAdmin.getClientId(),
+                "redirect_uri", hubSpotAdmin.getRedirectUri(),
+                "scope", hubSpotAdmin.getScopes()
+                ));
     }
 
-    public Mono<Map<String, Object>> accessToken(String code) {
+    public Map accessToken(String code) {
         return hubSpotAuthService.exchangeAuthorizationCode(code);
     }
 

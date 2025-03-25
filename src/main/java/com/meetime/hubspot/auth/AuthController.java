@@ -8,8 +8,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
-import java.util.Map;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/oauth")
@@ -18,15 +16,14 @@ public class AuthController {
     private final AuthService authService;
 
     @GetMapping("/authorize")
-    public String authorize() {
-        return authService.getAuthorizationUrl();
+    public Mono<ResponseEntity> authorize() {
+        return Mono.just(ResponseEntity.ok(authService.getAuthorizationURI().toString()));
     }
 
 
     @GetMapping("/callback")
-    public Mono<ResponseEntity<Map<String, Object>>> callback(@RequestParam String code) {
-        return authService.accessToken(code)
-                .map(ResponseEntity::ok);
+    public Mono<ResponseEntity> callback(@RequestParam String code) {
+        return Mono.just(ResponseEntity.ok(authService.accessToken(code)));
     }
 
 }
