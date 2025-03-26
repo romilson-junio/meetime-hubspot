@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Getter
-public class HubSpotAdmin {
+public class HubSpotConfig {
 
     @Value("${hubspot.client-id}")
     private String clientId;

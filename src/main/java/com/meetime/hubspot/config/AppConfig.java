@@ -7,10 +7,10 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
 @RequiredArgsConstructor
-public class HubSpotClient {
+public class AppConfig {
 
     @Bean
-    public WebClient webClient() {
+    public WebClient hubSpotClient() {
         return WebClient.builder()
                 .baseUrl("https://api.hubapi.com")
                 .filter(new WebClientFilter())

@@ -1,11 +1,12 @@
 package com.meetime.hubspot.service;
 
 import com.meetime.hubspot.dto.Contact;
+import com.meetime.hubspot.dto.ContactResponse;
 
-import java.util.Map;
+import java.util.List;
 
 public interface ContactService {
-    Map list();
+    List<ContactResponse> list();
     String create(Contact contact);
-    Map get(String id);
+    ContactResponse get(String id);
 }

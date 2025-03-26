@@ -1,40 +1,42 @@
 package com.meetime.hubspot.integration;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.meetime.hubspot.config.HubSpotClient;
 import com.meetime.hubspot.dto.Contact;
+import com.meetime.hubspot.dto.ContactResponse;
+import com.meetime.hubspot.dto.ContactResponseWrapper;
 import com.meetime.hubspot.enums.HubSpotURI;
 import com.meetime.hubspot.handler.exception.WebApplicationException;
 import com.meetime.hubspot.utils.ErrorMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-import java.util.Map;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class HubSpotContactService {
 
-    private final HubSpotClient hubSpotClient;
+    private final WebClient hubSpotClient;
 
-    public Map listAll() {
-        return hubSpotClient.webClient().get()
+    public List<ContactResponse> listAll() {
+        return hubSpotClient.get()
                 .uri(HubSpotURI.CONTACTS.getPath())
                 .retrieve()
                 .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(),
                         response -> response.bodyToMono(String.class)
                                 .flatMap(errorBody -> Mono.error(
                                         new WebApplicationException(response.statusCode(), ErrorMessage.read(errorBody, "message")))))
-                .bodyToMono(Map.class)
+                .bodyToMono(ContactResponseWrapper.class)
+                .map(ContactResponseWrapper::getContacts)
                 .block();
     }
 
 
     public String save(Contact contact) {
-        return hubSpotClient.webClient().post()
+        return hubSpotClient.post()
                 .uri(HubSpotURI.CONTACTS.getPath())
                 .bodyValue(contact.toData())
                 .retrieve()
@@ -42,13 +44,13 @@ public class HubSpotContactService {
                         response -> response.bodyToMono(String.class)
                                 .flatMap(errorBody -> Mono.error(
                                         new WebApplicationException(response.statusCode(), ErrorMessage.read(errorBody, "message")))))
-                .bodyToMono(JsonNode.class)
-                .map(json -> json.get("id").asText())
+                .bodyToMono(ContactResponse.class)
+                .map(ContactResponse::getId)
                 .block();
     }
 
-    public Map findById(String id) {
-        return hubSpotClient.webClient().get()
+    public ContactResponse findById(String id) {
+        return hubSpotClient.get()
                 .uri(HubSpotURI.CONTACTS.getPath() + "/" + id)
                 .retrieve()
                 .onStatus(status -> status.is4xxClientError() || status.is5xxServerError(),
@@ -56,7 +58,7 @@ public class HubSpotContactService {
                                 .flatMap(errorBody -> Mono.error(
                                         new WebApplicationException(
                                                 response.statusCode(), ErrorMessage.read(errorBody, "message", "Nenhum registro encontrado")))))
-                .bodyToMono(Map.class)
+                .bodyToMono(ContactResponse.class)
                 .block();
     }
 }
